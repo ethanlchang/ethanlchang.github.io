@@ -8,7 +8,7 @@ This term I've been working on several HCI projects, below my design manifesto y
 
 ## Design Manifesto
 
-
+Check out my design manifesto [here.]()
 
 ## Design Projects
 
