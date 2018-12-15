@@ -4,13 +4,13 @@
 
 Hey there, I'm Ethan Chang. I'm a Computer Science undergraduate student at WPI. I have experience working on team software projects and using the Java, C++/C, and HTML. I have worked using Webstorm IDE, IntelliJ IDE, and GitHub.
 
-This term I've been working on several HCI projects, below my design manifesto you can read the Medium articles about each.
-
 ## Design Manifesto
 
-Check out my design manifesto [here.]()
+Check out my design manifesto on Medium [here.](https://medium.com/@ethanlichang/design-manifesto-54bce3cf1c8f)
 
 ## Design Projects
+
+This term I've been working on several HCI projects, below you can read the Medium articles about each.
 
 [Design for Others](https://medium.com/@ethanlichang/design-for-others-e0a5da8331f8)
 
