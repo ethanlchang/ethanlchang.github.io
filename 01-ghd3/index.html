@@ -1,16 +1,112 @@
-<script src="https://d3js.org/d3.v5.min.js"></script>
+<!--CS4802 Assignment 1-->
+<!--by Ethan Chang elchang@wpi.edu-->
+<!--ethanlchang on Github-->
 
+<!DOCTYPE html>
+<html lang = "en">
+<head>
+    <script src="https://d3js.org/d3.v5.min.js"></script>
+</head>
+
+<body>
+<div id = "svgcontainer"></div>
 <script>
     console.log(d3); // test if d3 is loaded
-    // Add an SVG
-    // Add Rectangles
-    // Add Circles
-    // Add Lines
-    // Add Polygons
-</script>
 
-<svg width="300" height="300">
-    <circle cx="40" cy="20" r="10"></circle>
-    <circle cx="80" cy="80" r="30"></circle>
-    <circle cx="120" cy="140" r="60"></circle>
-</svg>
+    var data1 = [{x: 198, y: 118}, {x: 208, y: 130}, {x: 205, y: 115}, {x: 198, y: 118}]
+
+    //SVG and d3 shape/line code based on code from https://www.tutorialspoint.com/d3js/d3js_introduction_to_svg.htm
+
+    // Add an SVG
+    var svg = d3.select("#svgcontainer")
+        .append("svg")
+        .attr("width", 300)
+        .attr("height", 300);
+
+    // Add Circles
+    svg.append("circle")
+        .attr("cx", 200)
+        .attr("cy", 200)
+        .attr("r", 50)
+        .attr("fill", "white")
+        .attr("stroke", "black");
+    svg.append("circle")
+        .attr("cx", 200)
+        .attr("cy", 150)
+        .attr("r", 35)
+        .attr("fill", "white")
+        .attr("stroke", "black");
+    svg.append("circle")
+        .attr("cx", 200)
+        .attr("cy", 115)
+        .attr("r", 25)
+        .attr("fill", "white")
+        .attr("stroke", "black");
+
+    svg.append("circle")
+        .attr("cx", 193)
+        .attr("cy", 110)
+        .attr("r", 4)
+        .attr("fill", "black")
+        .attr("stroke", "black");
+    svg.append("circle")
+        .attr("cx", 207)
+        .attr("cy", 109)
+        .attr("r", 4)
+        .attr("fill", "black")
+        .attr("stroke", "black");
+
+    //Add Rectangles
+    svg.append("rect")
+        .attr("x", 194)
+        .attr("y", 146)
+        .attr("width", 5)
+        .attr("height", 5)
+        .attr("fill", "black")
+        .attr("stroke", "black");
+    svg.append("rect")
+        .attr("x", 190)
+        .attr("y", 160)
+        .attr("width", 5)
+        .attr("height", 5)
+        .attr("fill", "black")
+        .attr("stroke", "black");
+    svg.append("rect")
+        .attr("x", 188)
+        .attr("y", 173)
+        .attr("width", 5)
+        .attr("height", 5)
+        .attr("fill", "black")
+        .attr("stroke", "black");
+
+    // Add Lines
+    svg.append("line")
+        .attr("x1", 100)
+        .attr("y1", 100)
+        .attr("x2", 170)
+        .attr("y2", 150)
+        .style("stroke", "brown")
+        .style("stroke-width", 5);
+    svg.append("line")
+        .attr("x1", 225)
+        .attr("y1", 150)
+        .attr("x2", 270)
+        .attr("y2", 200)
+        .style("stroke", "brown")
+        .style("stroke-width", 5);
+
+    // Add Polygons
+
+    //helper function from https://www.d3-graph-gallery.com/graph/shape.html
+    var lineFunc = d3.line()
+        .x(function(d) { return d.x })
+        .y(function(d) { return d.y })
+
+    svg.append('path')
+        .attr('d', lineFunc(data1))
+        .attr('stroke', 'black')
+        .attr('fill', 'orange');
+
+</script>
+</body>
+</html>
