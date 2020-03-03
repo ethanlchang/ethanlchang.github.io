@@ -1,0 +1,183 @@
+<!--CS4802 Assignment 4-->
+<!--by Ethan Chang elchang@wpi.edu-->
+<!--ethanlchang on Github-->
+
+
+<!--Data originally from: -->
+<!--https://informationisbeautiful.net/visualizations/trillions-what-is-a-trillion-dollars/-->
+<!--https://docs.google.com/spreadsheets/d/1_YoXOf1-5b30Rt0AOxO9O4XNd-JpBQWovM3z2W9QUuI/edit#gid=1796369031-->
+
+<!--Code based on-->
+<!--in class treemap example-->
+<!--https://www.d3indepth.com/layouts/-->
+
+<!DOCTYPE html>
+<html lang = "en">
+<head>
+    <script src="https://d3js.org/d3.v5.min.js"></script>
+    <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+    <meta content="utf-8" http-equiv="encoding">
+</head>
+
+<body>
+<!--<div id = "svgcontainer"></div>-->
+<svg width=1600 height=700></svg>
+
+
+<script>
+    const colorScale = d3.scaleSequential(d3.interpolateGreens)
+        .domain([0, 40]);
+
+    var svg = d3.select('svg'),
+        width = +svg.attr('width'),
+        height = +svg.attr('height');
+
+    d3.csv('Trillions.csv')
+        .then(function(data) {
+            data.forEach(function(d) {
+                d.trillion_US$ = +d.trillion_US$;
+                d.what = d.what;
+            });
+            console.log(data);
+
+            var nest = d3.nest()
+                .key(function(d) {return d.what;})
+                .key(function(d) {return d.trillion_US$;})
+                .rollup(function(d) {return  d3.sum(d, function(d) { return d.trillion_US$; }) })
+                .entries(data);
+            console.log('look at our nest:', nest);
+
+            var root = d3.hierarchy({values: nest}, function(d) { return d.values; })
+                .sum(function(d) { return d.value; }) // RIGHT
+                .sort(function(a, b) { return b.value - a.value; });
+            console.log('check out our root:', root);
+
+            var packLayout = d3.pack()
+                .size([600, 600]);
+
+            packLayout(root);
+            console.log("pack layout is ", root);
+
+            svg.selectAll("g")
+                .selectAll('circle')
+                .data(root.leaves())
+                .enter()
+                .append('circle')
+                .attr('cx', function(d) { return d.x; })
+                .attr('cy', function(d) { return d.y; })
+                .attr('r', function(d) { return d.r; })
+
+            var leaf = svg.selectAll("g")
+                .data(root.leaves())
+                .enter().append("g");
+            //.attr("transform", d => `translate(${d.x},${d.y})`);
+
+            leaf.append('circle')
+                .attr('fill', function(d) {
+                    return colorScale(d.r);
+                })
+                .attr('id', function(d) { return '#circle '+ d.what; } )
+                .attr("fill-opacity", 1)
+                .attr('cx', function(d) { return d.x; })
+                .attr('cy', function(d) { return d.y; })
+                .attr('r', function(d) { return d.r; })
+                .on('mouseenter', function (s, i) {
+                    d3.select(this)
+                        .transition()
+                        .duration(300)
+                        .attr('opacity', 0.6);
+
+                    //tries to change opacity of bar, does not work
+                    svg.selectAll( '#bar '+ s.parent.data.key)
+                        .attr("opacity", 0.6);
+
+                    leaf.append("text")
+                        .attr('class', 'divergence')
+                        .attr('x', 10)
+                        .attr('y', 690)
+                        .attr('font-size', 20)
+                        .text(s.data.key + " trillion USD: " + s.parent.data.key);
+                    console.log(function(d) { return d; })
+                })
+                .on('mouseleave', function (s, i) {
+                    d3.select(this)
+                        .transition()
+                        .duration(300)
+                        .attr('opacity', 1);
+
+                    d3.selectAll( '#bar ' + s.parent.data.key)
+                        .attr("opacity", 1);
+
+                    leaf.selectAll('.divergence').remove();
+                });
+
+            svg.selectAll("div")
+                .data(data)
+                .enter()
+                .append("rect")
+                .attr("class", "bar")
+                .attr("id", function (d) { return "bar " + d.what; })
+                .attr('fill', function(d) {
+                    return colorScale(d.trillion_US$ * 1.5);
+                })
+                .attr("x", function (d, i) {
+                    for (i>0; i < data.length; i++) {
+                        return i * 21 + 600;
+                    }
+                })
+                .attr("y", function (d) {
+                    return height - 40 - (d.trillion_US$ * 5);
+                })
+                .attr("width", 15)
+                .attr("height", function (d) {
+                    return d.trillion_US$ * 5;
+                })
+                .on('mouseenter', function (s, i) {
+                    d3.select(this)
+                        .transition()
+                        .duration(300)
+                        .attr('opacity', 0.6);
+
+                    //tries to change opacity of circle, does not work
+                    svg.selectAll( '#circle '+ s.what)
+                        .attr("opacity", 0.6);
+                    console.log(s);
+
+                    svg.append("text")
+                        .attr('class', 'divergence')
+                        .attr('x', 10)
+                        .attr('y', 690)
+                        .attr('font-size', 20)
+                        .text(s.trillion_US$ + " trillion USD: " + s.what);
+                    console.log(function(d) { return d; })
+                })
+                .on('mouseleave', function (s, i) {
+                    d3.select(this)
+                        .transition()
+                        .duration(300)
+                        .attr('opacity', 1);
+
+                    svg.selectAll( '#circle '+ s.what)
+                        .attr("opacity", 1);
+
+                    svg.selectAll('.divergence').remove();
+                });;
+
+            var xScale = d3.scaleBand()
+                .rangeRound([0, width])
+                .paddingInner(0.05);
+            // var yScale = d3.scaleLinear()
+            //     .rangeRound([height, 0]);
+
+            svg.append("g")
+                .attr("class", "axis")
+                .attr("transform", "translate(" + 600 + "," + (height - 40) + ")")
+                .call(d3.axisBottom(xScale));
+        })
+        .catch(function(error){
+            // handle error
+        })
+
+</script>
+</body>
+</html>
